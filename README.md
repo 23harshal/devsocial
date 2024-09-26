@@ -15,4 +15,24 @@ install all these also
 "validator": "^13.12.0"
 }
 
+APIS -
+
+AUTH APIS
+
+POST /signup
+POST /login
+POST /logout
+
+USER APIS
+GET /profile/view
+PATCH /profile/edit
+PATCH /profile/password/edit
+
+REQUEST APIS
+POST /request/review/:status/:requestId
+
+GET /connections
+GET /request/received
+GET /feed
+
 Auhorization and authentication done by using jwt tokens and we use cookies for sending information to clients

@@ -6,8 +6,12 @@ const { validateSignUpData } = require("./utils/validation");
 const User = require("./models/user");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const userAuth = require("./middelwares/auth");
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/signup", async (req, res) => {
   try {
@@ -42,13 +46,16 @@ app.post("/login", async (req, res) => {
     }
     const user = await User.findOne({ emailId });
     if (!user) {
-      throw new Error("invalid credentials");
+      throw new Error("user not found...");
     }
 
     const isPassword = await bcrypt.compare(password, user.password);
     if (!isPassword) {
       throw new Error("invalid credentials");
     }
+    const token = await jwt.sign({ _id: user._id }, process.env.SECRET);
+
+    res.cookie("token", token);
 
     res.json({ message: "login successful" });
   } catch (error) {
@@ -56,9 +63,19 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.get("/profile", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+
+    res.json({ message: "user profile", user });
+  } catch (error) {
+    res.status(400).json({ message: "unauthorized user" });
+  }
+});
+
 connectDB()
   .then(() => {
-    console.log("Database is conneted...");
+    console.log("Database is connected...");
     app.listen(5000, () => {
       console.log("app is running on 5000 server");
     });

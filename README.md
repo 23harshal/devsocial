@@ -14,3 +14,5 @@ install all these also
 "social": "file:",
 "validator": "^13.12.0"
 }
+
+Auhorization and authentication done by using jwt tokens and we use cookies for sending information to clients

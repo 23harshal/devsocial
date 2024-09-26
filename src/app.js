@@ -7,7 +7,7 @@ const User = require("./models/user");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
+
 const userAuth = require("./middelwares/auth");
 
 app.use(express.json());
@@ -53,9 +53,11 @@ app.post("/login", async (req, res) => {
     if (!isPassword) {
       throw new Error("invalid credentials");
     }
-    const token = await jwt.sign({ _id: user._id }, process.env.SECRET);
+    const token = await user.getJWT();
 
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 360000),
+    });
 
     res.json({ message: "login successful" });
   } catch (error) {

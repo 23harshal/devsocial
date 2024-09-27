@@ -15,7 +15,24 @@ const validateSignUpData = (req) => {
   }
 };
 
+const validateProfileData = (req) => {
+  const allowedFields = [
+    "firstName",
+    "lastName",
+    "gender",
+    "photoUrl",
+    "about",
+    "hobbies",
+    "age",
+  ];
+
+  const isallowed = Object.keys(req.body).every((field) =>
+    allowedFields.includes(field)
+  );
+  return isallowed;
+};
 
 module.exports = {
-  validateSignUpData
-}
+  validateSignUpData,
+  validateProfileData,
+};

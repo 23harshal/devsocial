@@ -58,4 +58,47 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
   }
 });
 
+userRouter.get("/user/feed", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+
+    if (limit > 30) {
+      limit = 30;
+    }
+    console.log(limit);
+
+    const skipPeople = (page - 1) * limit;
+
+    const connectionRequest = await ConnectionRequest.find({
+      $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
+    });
+
+    const hideUsersFromFeed = new Set();
+
+    connectionRequest.forEach((request) => {
+      hideUsersFromFeed.add(request.fromUserId.toString());
+      hideUsersFromFeed.add(request.toUserId.toString());
+    });
+
+    const users = await User.find({
+      $and: [
+        { _id: { $nin: Array.from(hideUsersFromFeed) } },
+        { _id: { $ne: loggedInUser._id } },
+      ],
+    })
+      .select(USER_PUBLIC_DATA)
+      .skip(skipPeople)
+      .limit(limit);
+
+    res.json({
+      message: "user feed ",
+      data: users,
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
+
 module.exports = userRouter;

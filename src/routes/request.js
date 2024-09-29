@@ -53,4 +53,49 @@ requestRouter.post(
   }
 );
 
+requestRouter.post(
+  "/request/review/:status/:requestId",
+  userAuth,
+  async (req, res) => {
+    try {
+      const userId = req.user._id;
+      const requestId = req.params.requestId;
+      const status = req.params.status;
+
+      const allowedStatus = ["rejected", "accepted"];
+
+      if (!allowedStatus.includes(status)) {
+        throw new Error("invalid status");
+      }
+
+      const connectionRequest = await ConnectionRequest.findOne({
+        _id: requestId,
+        toUserId: userId,
+        status: "interested",
+      });
+      if (!connectionRequest) {
+        throw new Error("invalid request not found....");
+      }
+
+      connectionRequest.status = status;
+
+      const data = await connectionRequest.save();
+
+      if (!data) {
+        throw new Error("connection request not sent internal server error");
+      }
+
+      res.json({
+        message: "connection request status changed successfully",
+        data,
+      });
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
+);
+
+
+
+
 module.exports = requestRouter;

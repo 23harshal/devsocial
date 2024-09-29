@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
-      default: "data:image/jpeg;base64",
+      default: "",
     },
     about: {
       type: String,

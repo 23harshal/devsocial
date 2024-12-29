@@ -34,6 +34,7 @@ authRouter.post("/signup", async (req, res) => {
 authRouter.post("/login", async (req, res) => {
   try {
     const { emailId, password } = req.body;
+
     if (!validator.isEmail(emailId)) {
       throw new Error("invalid credentials");
     }
@@ -52,7 +53,7 @@ authRouter.post("/login", async (req, res) => {
       expires: new Date(Date.now() + 8 * 360000),
     });
 
-    res.json({ message: "login successful" });
+    res.json({ message: "login successful", data: user });
   } catch (error) {
     res.status(400).send(error.message);
   }

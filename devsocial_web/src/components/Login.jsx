@@ -1,25 +1,34 @@
 import { useState } from "react";
 import { BASE_URL } from "../utils/constants";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { addUser } from "../store/slices/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState("elon@gmail.com");
+  const [emailId, setEmail] = useState("elon@gmail.com");
   const [password, setPassword] = useState("Elon@123");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const handleLogin = async () => {
     try {
+      console.log(emailId, password);
       const response = await axios.post(
         BASE_URL + "/login",
         {
-          email,
+          emailId,
           password,
         },
         { withCredentials: true }
       );
-      console.log(response);
-    } catch (error) {
-      setError(error.message);
+
+      dispatch(addUser(response.data.data));
+      return navigate("/");
+    } catch (err) {
+      setError(err.response.data);
     }
   };
 
@@ -38,10 +47,10 @@ const Login = () => {
             <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
           </svg>
           <input
-            type="email"
+            type="text"
             className="grow "
             placeholder="Email"
-            value={email}
+            value={emailId}
             onChange={(e) => setEmail(e.target.value)}
           />
         </label>
@@ -73,6 +82,7 @@ const Login = () => {
             Login
           </button>
         </div>
+        <p className="text-error font-thin p-3">{error}</p>
       </div>
     </div>
   );

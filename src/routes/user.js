@@ -67,7 +67,7 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
     if (limit > 30) {
       limit = 30;
     }
-    console.log(limit);
+    //console.log(limit);
 
     const skipPeople = (page - 1) * limit;
 

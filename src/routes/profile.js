@@ -16,23 +16,26 @@ profileRouter.get("/profile", userAuth, async (req, res) => {
   }
 });
 
-profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
+profileRouter.put("/profile/edit", userAuth, async (req, res) => {
   try {
     if (!validateProfileData(req)) {
-      throw new Error("you are not allowed to edit...");
+      throw new Error("Invalid Edit Request");
     }
-    const user = req.user;
 
-    Object.keys(req.body).forEach((key) => (user[key] = req.body[key]));
+    const loggedInUser = req.user;
+    //console.log(req.body);
 
-    await user.save();
+    Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]));
 
-    res.json({ message: user.firstName + "your profile is updated" });
-  } catch (error) {
-    res.status(400).send(error.message);
+    await loggedInUser.save();
+
+    res.json({
+      message: `${loggedInUser.firstName}, your profile updated successfuly`,
+      data: loggedInUser,
+    });
+  } catch (err) {
+    res.status(400).send("ERROR : " + err.message);
   }
 });
-
-
 
 module.exports = profileRouter;

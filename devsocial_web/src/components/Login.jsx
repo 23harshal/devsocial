@@ -15,7 +15,6 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      console.log(emailId, password);
       const response = await axios.post(
         BASE_URL + "/login",
         {
@@ -28,7 +27,7 @@ const Login = () => {
       dispatch(addUser(response.data.data));
       return navigate("/");
     } catch (err) {
-      setError(err.response.data);
+      setError(err);
     }
   };
 

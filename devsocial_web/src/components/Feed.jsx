@@ -23,11 +23,12 @@ const Feed = () => {
   useEffect(() => {
     getFeed();
   }, []);
-  return (
-    <div>
-      <UserCard user={feed[0]} />
-    </div>
-  );
+  if (feed === null) return <div className="text-3xl font-bold">No feed</div>;
+
+  if (feed.length === 0)
+    return <div className="text-3xl font-bold">No feed for current user</div>;
+
+  return <div>{feed && <UserCard user={feed[0]} />}</div>;
 };
 
 export default Feed;

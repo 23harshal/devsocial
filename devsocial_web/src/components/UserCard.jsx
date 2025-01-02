@@ -1,7 +1,27 @@
-import React from "react";
+import axios from "axios";
+
+import { BASE_URL } from "../utils/constants";
+import { useDispatch } from "react-redux";
+
+import { removeFromFeed } from "../store/slices/feedSlice";
 
 const UserCard = ({ user }) => {
-  const { firstName, lastName, photoUrl, age, about, gender } = user;
+  const dispatch = useDispatch();
+  const { _id, firstName, lastName, photoUrl, age, about, gender } = user;
+
+  const handleConnectionRequest = async (requestStatus, userId) => {
+    try {
+      const response = await axios.post(
+        BASE_URL + "/request/send/" + requestStatus + "/" + userId,
+        {},
+        { withCredentials: true }
+      );
+      console.log(response);
+      dispatch(removeFromFeed(userId));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="mx-auto my-5 card w-[380px] h-[530px] rounded-3xl overflow-hidden relative bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 shadow-xl transition-transform duration-300 hover:scale-105">
@@ -54,10 +74,16 @@ const UserCard = ({ user }) => {
 
         {/* Buttons */}
         <div className="flex justify-center gap-4 mt-4">
-          <button className="w-24 py-2 rounded-full bg-red-500 hover:bg-red-600 text-white font-medium transition-transform duration-300 transform hover:scale-105 shadow-lg">
+          <button
+            className="w-24 py-2 rounded-full bg-red-500 hover:bg-red-600 text-white font-medium transition-transform duration-300 transform hover:scale-105 shadow-lg"
+            onClick={() => handleConnectionRequest("ignored", _id)}
+          >
             Nope
           </button>
-          <button className="w-24 py-2 rounded-full bg-green-500 hover:bg-green-600 text-white font-medium transition-transform duration-300 transform hover:scale-105 shadow-lg">
+          <button
+            className="w-24 py-2 rounded-full bg-green-500 hover:bg-green-600 text-white font-medium transition-transform duration-300 transform hover:scale-105 shadow-lg"
+            onClick={() => handleConnectionRequest("interested", _id)}
+          >
             Like
           </button>
         </div>

@@ -73,6 +73,7 @@ requestRouter.post(
         toUserId: userId,
         status: "interested",
       });
+      console.log(connectionRequest);
       if (!connectionRequest) {
         throw new Error("invalid request not found....");
       }
@@ -94,8 +95,5 @@ requestRouter.post(
     }
   }
 );
-
-
-
 
 module.exports = requestRouter;

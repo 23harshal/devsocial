@@ -8,6 +8,6 @@ export const store = configureStore({
     user: userReducer,
     feed: feedReducer,
     connections: connectionReducer,
-    request : requestReducer,
+    requests: requestReducer,
   },
 });

@@ -12,17 +12,19 @@ const corsOptions = {
   credentials: true, // Allow cookies to be sent
 };
 
-app.use(cors(corsOptions)); // Use CORS middleware with options
+app.use(cors(corsOptions)); //
+// Use CORS middleware with options
+app.options("*", cors(corsOptions)); // Handle preflight requests
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, PUT, DELETE, PATCH"
+//   );
+//   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//   next();
+// });
 
 app.use(express.json());
 app.use(cookieParser());

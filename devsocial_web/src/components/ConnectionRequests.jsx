@@ -13,6 +13,9 @@ const ConnectionRequests = () => {
       const response = await axios.get(BASE_URL + "/user/request/received", {
         withCredentials: true,
       });
+      // console.log("here is response");
+
+      // console.log(response);
       dispatch(addRequest(response.data.connectionRequests));
     } catch (error) {
       console.log(error);
@@ -26,7 +29,7 @@ const ConnectionRequests = () => {
         {},
         { withCredentials: true }
       );
-      console.log(response);
+      //console.log(response);
       dispatch(removeRequest(requestId));
     } catch (error) {
       console.log(error);
@@ -38,7 +41,7 @@ const ConnectionRequests = () => {
   }, []);
   if (!requests) return;
 
-  if (requests.length === 0)
+  if (requests.length === 0 || requests === null)
     return <h1 className="flex justify-center my-10"> No Requests Found</h1>;
 
   return (

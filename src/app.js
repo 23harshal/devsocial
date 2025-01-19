@@ -4,6 +4,8 @@ require("dotenv").config();
 const connectDB = require("./utils/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+
+const http = require("http");
 // Allow specific origins for CORS
 const corsOptions = {
   origin: "http://localhost:5173", // Frontend URL
@@ -16,16 +18,6 @@ app.use(cors(corsOptions)); //
 // Use CORS middleware with options
 app.options("*", cors(corsOptions)); // Handle preflight requests
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, PUT, DELETE, PATCH"
-//   );
-//   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-//   next();
-// });
-
 app.use(express.json());
 app.use(cookieParser());
 
@@ -34,16 +26,20 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+const initalizeSocket = require("./utils/socket");
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
 
+const server = http.createServer(app);
+initalizeSocket(server);
+
 connectDB()
   .then(() => {
     console.log("Database is connected...");
-    app.listen(5000, () => {
+    server.listen(5000, () => {
       console.log("App is running on port 5000");
     });
   })

@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
 
@@ -9,17 +9,19 @@ const Chat = () => {
   const [newMessage, setNewMessage] = useState("");
   const user = useSelector((state) => state.user);
   const userId = user?._id;
+  const socketRef = useRef(null);
 
   const sendMessage = () => {
-    const socket = createSocketConnection();
-    socket.emit("sendMessage", {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      userId,
-      targetUserId,
-      text: newMessage,
-    });
-    setNewMessage("");
+    if (socketRef.current) {
+      socketRef.current.emit("sendMessage", {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userId,
+        targetUserId,
+        text: newMessage,
+      });
+      setNewMessage("");
+    }
   };
 
   useEffect(() => {
@@ -27,6 +29,8 @@ const Chat = () => {
       return;
     }
     const socket = createSocketConnection();
+    socketRef.current = socket;
+
     socket.emit("joinChat", {
       firstName: user.firstName,
       userId,
@@ -40,8 +44,10 @@ const Chat = () => {
 
     return () => {
       socket.disconnect();
+      socketRef.current = null;
     };
-  }, [userId, targetUserId]);
+  }, [userId, targetUserId, user]);
+
   return (
     <div className="w-3/4 mx-auto border border-gray-600 m-5 h-[70vh] flex flex-col">
       <h1 className="p-5 border-b border-gray-400">Chat</h1>
